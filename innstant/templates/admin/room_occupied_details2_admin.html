@@ -1,0 +1,123 @@
+{% block content %}
+<br><br>
+<div class="card">
+    <div class="card-body">
+        <h5 class="alert alert-warning"><i class="fa-solid fa-receipt"></i> Payment ID: {{payment.id}}</h5>
+        <div class=" p-2   text-dark">
+                <div class="row mb-1">
+                    <div  class="col-auto  ">Tenant: </div>
+                    <div class="col-auto     ">
+                        {{ payment.tenant.first_name }} {{ payment.tenant.last_name }}
+                    </div>
+                </div>
+
+
+
+                <div class="row mb-1">
+                    <label  class="col-auto  "> Status: </label>
+                    <div class="col-auto ">
+                        {{payment.status}}
+
+                        {% if payment.status == 'Paid' %}
+                        <i class="fa-solid fa-circle-check" style="color:#2ECC71 "></i>
+                        {% elif payment.status == 'Unpaid' %}
+                        <i class="fa-solid fa-circle-xmark" style="color:#D35400 "></i>
+                        {% endif %}
+
+
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+function auto_grow(element) {
+      element.style.height = "5px";
+      element.style.height = (element.scrollHeight) + "px";
+    }
+    // Resize textareas on page load
+    var textareas = document.querySelectorAll("textarea");
+    textareas.forEach(function(textarea) {
+      auto_grow(textarea);
+    });
+    // Resize textareas on input change
+    document.addEventListener("input", function(event) {
+      if (event.target.tagName.toLowerCase() !== "textarea") return;
+      auto_grow(event.target);
+    });
+</script>
+<script>
+var startDateInput = document.getElementById("date1");
+var dueDateInput = document.getElementById("date2");
+var startDate = new Date(startDateInput.value);
+var dueDate = new Date(dueDateInput.value);
+var currentDate = new Date();
+var diffTime = dueDate - currentDate;
+var diffSeconds = Math.floor(diffTime / 1000);
+var diffMinutes = Math.floor(diffSeconds / 60);
+var diffHours = Math.floor(diffMinutes / 60);
+var diffDays = Math.floor(diffHours / 24);
+var remainingHours = diffHours % 24;
+var remainingMinutes = diffMinutes % 60;
+var remainingSeconds = diffSeconds % 60;
+var stayEndsInput = document.getElementById("ends");
+function updateRemainingTime() {
+  if (currentDate >= startDate) {
+    diffTime = dueDate - currentDate;
+    var diffHours = Math.floor(diffTime / (1000 * 60 * 60)); // calculate the difference in hours
+    if (diffTime <= 0) {
+      stayEndsInput.value = "Stay has ended"; // stay has ended
+    } else if (diffDays <= 1) {
+      stayEndsInput.value = diffHours + " hours"; // update the input field with the remaining hours
+    } else {
+      stayEndsInput.value = diffDays + " days, " + remainingHours + " hours"; // update the input field with the remaining days
+    }
+
+    // check if 3 days remain and display the notification
+    displayNotification(diffDays);
+  }
+}
+function displayNotification(days) {
+  var stayEndsInput = document.getElementById("ends");
+  if (stayEndsInput.value === "Stay has ended") {
+    // Hide both buttons
+    document.getElementById("notif_0").style.display = "none";
+    document.getElementById("notif_1").style.display = "block";
+  }
+  else if (days <= 3) {
+    // Display the "3 Send Email" button
+    document.getElementById("notif_0").style.display = "block";
+    document.getElementById("notif_1").style.display = "none";
+  }
+  else if (days == 0) {
+    // Display the "0 Send Email" button
+    document.getElementById("notif_0").style.display = "none";
+    document.getElementById("notif_1").style.display = "block";
+  }
+  else {
+    // Hide both buttons
+    document.getElementById("notif_0").style.display = "none";
+    document.getElementById("notif_1").style.display = "none";
+  }
+}
+updateRemainingTime(); // call the function on page load
+window.addEventListener('load', function() {
+  setInterval(updateRemainingTime, 1000); // call the function every second to update the remaining time
+});
+</script>
+{% endblock %}
